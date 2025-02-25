@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>After School Activity</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="logo"></div>
+      <nav class="NavLinks"></nav>
+    </header>
+    <h2>Lessons</h2>
+    <div id="app" class="app flex flex-wrap justify-center gap-5">
+      <div
+        v-for="Lesson in Lessons"
+        :key="Lesson.id"
+        class="border-2 p-2 hover:shadow"
+      >
+        <div class="product-image">
+          <img :src="`./images/${Lesson.LessonImage}`" alt="Lesson Image" />
+        </div>
+        <div class="product-info">
+          <h3>{{ Lesson.LessonName }}</h3>
+          <div class="rating">
+            <span v-for="n in Lesson.Rating" class="star"></span>
+          </div>
+          <p><strong>Price: </strong> AED {{ Lesson.Price }}</p>
+          <p><strong>Availability: </strong> {{ Lesson.Availability }}</p>
+        </div>
+        <button
+          class="flex items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
+        >
+          Enroll
+        </button>
+      </div>
+    </div>
+
+    <script>
+      var App = new Vue({
+        el: "#app",
+        data: {
+          Logo: "After School Activity",
+          Lessons: [
+            {
+              id: 1,
+              LessonName: "Pottery",
+              LessonImage: "Pottery.png",
+              Rating: 4,
+              Price: 20,
+              Availability: 10,
+            },
+            {
+              id: 2,
+              LessonName: "Piano",
+              LessonImage: "Piano.png",
+              Rating: 5,
+              Price: 30,
+              Availability: 5,
+            },
+            {
+              id: 3,
+              LessonName: "Cricket",
+              LessonImage: "Cricket.png",
+              Rating: 3,
+              Price: 25,
+              Availability: 8,
+            },
+            {
+              id: 4,
+              LessonName: "Swimming",
+              LessonImage: "Swimming.png",
+              Rating: 4,
+              Price: 15,
+              Availability: 12,
+            },
+            {
+              id: 5,
+              LessonName: "Coding",
+              LessonImage: "Coding.png",
+              Rating: 5,
+              Price: 40,
+              Availability: 7,
+            },
+            {
+              id: 6,
+              LessonName: "Yoga",
+              LessonImage: "Yoga.png",
+              Rating: 4,
+              Price: 10,
+              Availability: 20,
+            },
+            {
+              id: 7,
+              LessonName: "Gardening",
+              LessonImage: "Gardening.png",
+              Rating: 3,
+              Price: 18,
+              Availability: 9,
+            },
+            {
+              id: 8,
+              LessonName: "Karate",
+              LessonImage: "Karate.png",
+              Rating: 4,
+              Price: 22,
+              Availability: 6,
+            },
+            {
+              id: 9,
+              LessonName: "Painting",
+              LessonImage: "Painting.png",
+              Rating: 5,
+              Price: 35,
+              Availability: 4,
+            },
+            {
+              id: 10,
+              LessonName: "Dancing",
+              LessonImage: "Dancing.png",
+              Rating: 4,
+              Price: 28,
+              Availability: 11,
+            },
+          ],
+        },
+      });
+    </script>
+  </body>
+</html>
