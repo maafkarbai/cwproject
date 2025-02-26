@@ -13,66 +13,109 @@
     ></script>
   </head>
   <body>
-    <header>
-      <div class="logo"></div>
-      <nav class="NavLinks"></nav>
+    <header
+      class="flex justify-between items-center p-4 max-w-7xl mx-auto sm:flex-row flex-col gap-3"
+    >
+      <div class="logo flex items-center gap-2 text-2xl font-semibold">
+        <img
+          :src="Logo.LogoUrl"
+          :alt="Logo.LogoAlt"
+          class="w-[100px] h-[100px] object-cover"
+        />
+        After School Activity
+      </div>
+      <div class="SearchBar">
+        <input
+          type="search"
+          placeholder="Search for lessons"
+          class="border p-2 bg-gray-50 rounded h-10"
+        />
+        <button
+          class="bg-black text-white p-2 rounded "
+          @click="searchLesson"
+        >
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+      </div>
     </header>
-    <h2 class="text-4xl underline-offset-4 py-4 underline decoration-[7px]">
-      Lessons
-    </h2>
-    <div id="app" class="app flex flex-wrap justify-center gap-5">
-      <div
-        v-for="Lesson in Lessons"
-        :key="Lesson.id"
-        class="border-2 p-2 hover:shadow"
-      >
-        <div class="product-image">
-          <img
-            :src="`./images/${Lesson.LessonImage}`"
-            class="w-[250px] h-[250px] object-cover"
-            alt="Lesson Image"
-          />
-        </div>
-        <div class="product-info">
-          <div class="rating flex justify-center">
-            <span v-for="n in Lesson.Rating" class="star"
-              ><i class="fa-solid fa-star"></i
-            ></span>
+    <div class="max-w-7xl mx-auto lessons-container">
+      <div class="flex flex-wrap items-center">
+        <h2 class="text-4xl underline-offset-4 py-4 underline decoration-[7px]">
+          Lessons
+        </h2>
+      </div>
+      <div id="app" class="app flex flex-wrap justify-center gap-5 mx-auto">
+        <div
+          v-for="Lesson in Lessons"
+          :key="Lesson.id"
+          class="border-2 p-2 hover:shadow"
+        >
+          <div class="product-image">
+            <img
+              :src="`./images/${Lesson.LessonImage}`"
+              class="w-[250px] h-[250px] object-cover"
+              alt="Lesson Image"
+            />
           </div>
-          <h3 class="text-center text-2xl font-semibold">
-            {{ Lesson.LessonName }}
-          </h3>
+          <div class="product-info">
+            <div class="rating flex justify-center">
+              <span v-for="n in Lesson.Rating" class="star"
+                ><i class="fa-solid fa-star"></i
+              ></span>
+            </div>
+            <h3 class="text-center text-2xl font-semibold">
+              {{ Lesson.LessonName }}
+            </h3>
 
-          <p><strong>Price: </strong> AED {{ Lesson.Price }}</p>
+            <p><strong>Price: </strong> AED {{ Lesson.Price }}</p>
 
-          <p class="text-red-600" v-if="Lesson.Availability <= 5">
-            <strong>Availability: </strong> {{ Lesson.Availability }}
-          </p>
-          <p v-else>
-            <strong>Availability: </strong> {{ Lesson.Availability }}
-          </p>
+            <p class="text-red-600" v-if="Lesson.Space <= 5">
+              <strong>Space: </strong> {{ Lesson.Space }}
+            </p>
+            <p v-else><strong>Space: </strong> {{ Lesson.Space }}</p>
+          </div>
+          <button
+            v-if="Lesson.Space === 0"
+            disabled
+            class="flex opacity-50 justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
+          >
+            <i class="fa-solid fa-cart-plus mr-2"></i>
+            Add to Cart
+          </button>
+          <button
+            v-else
+            @click="addToCart(Lesson)"
+            class="flex justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
+          >
+            <i class="fa-solid fa-cart-plus mr-2"></i>
+            Add to Cart
+          </button>
         </div>
-        <button
-          v-if="Lesson.Availability === 0"
-          disabled
-          class="flex w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
-        >
-          Activity Full
-        </button>
-        <button
-          v-else
-          class="flex w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
-        >
-          Enroll
-        </button>
       </div>
     </div>
 
     <script>
       var App = new Vue({
         el: "#app",
+        computed: {},
+        methods: {
+          addToCart: function (lesson) {
+            this.Cart.push(lesson.id);
+            this.showNotification(`${lesson.LessonName} added to cart`);
+          },
+        },
+        mounted() {
+          document.title = this.SiteName;
+        },
         data: {
+          SiteName: "After School Activity",
           Logo: "After School Activity",
+          Cart: [],
+          Logo: {
+            LogoUrl: "images/CWLogo.png",
+            LogoAlt: "After School Activity",
+          },
           Lessons: [
             {
               id: 1,
@@ -80,7 +123,7 @@
               LessonImage: "Pottery.png",
               Rating: 4,
               Price: 20,
-              Availability: 10,
+              Space: 10,
             },
             {
               id: 2,
@@ -88,7 +131,7 @@
               LessonImage: "Piano.jpg",
               Rating: 5,
               Price: 30,
-              Availability: 5,
+              Space: 5,
             },
             {
               id: 3,
@@ -96,7 +139,7 @@
               LessonImage: "Cricket.jpg",
               Rating: 3,
               Price: 25,
-              Availability: 8,
+              Space: 8,
             },
             {
               id: 4,
@@ -104,7 +147,7 @@
               LessonImage: "Swimming.jpg",
               Rating: 4,
               Price: 15,
-              Availability: 12,
+              Space: 12,
             },
             {
               id: 5,
@@ -112,7 +155,7 @@
               LessonImage: "Coding.jpg",
               Rating: 5,
               Price: 40,
-              Availability: 7,
+              Space: 7,
             },
             {
               id: 6,
@@ -120,7 +163,7 @@
               LessonImage: "Yoga.jpg",
               Rating: 4,
               Price: 10,
-              Availability: 20,
+              Space: 20,
             },
             {
               id: 7,
@@ -128,7 +171,7 @@
               LessonImage: "Gardening.jpg",
               Rating: 3,
               Price: 18,
-              Availability: 9,
+              Space: 9,
             },
             {
               id: 8,
@@ -136,7 +179,7 @@
               LessonImage: "Karate.jpg",
               Rating: 4,
               Price: 22,
-              Availability: 6,
+              Space: 6,
             },
             {
               id: 9,
@@ -144,7 +187,7 @@
               LessonImage: "Painting.jpg",
               Rating: 5,
               Price: 35,
-              Availability: 5,
+              Space: 5,
             },
             {
               id: 10,
@@ -152,7 +195,7 @@
               LessonImage: "Dance.jpg",
               Rating: 4,
               Price: 28,
-              Availability: 11,
+              Space: 11,
             },
           ],
         },
