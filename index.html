@@ -13,92 +13,143 @@
     ></script>
   </head>
   <body>
-    <header
-      class="flex justify-between items-center p-4 max-w-7xl mx-auto sm:flex-row flex-col gap-3"
-    >
-      <div class="logo flex items-center gap-2 text-2xl font-semibold">
-        <img
-          :src="Logo.LogoUrl"
-          :alt="Logo.LogoAlt"
-          class="w-[100px] h-[100px] object-cover"
-        />
-        After School Activity
-      </div>
-      <div class="SearchBar">
-        <input
-          type="search"
-          placeholder="Search for lessons"
-          class="border p-2 bg-gray-50 rounded h-10"
-        />
-        <button
-          class="bg-black text-white p-2 rounded "
-          @click="searchLesson"
-        >
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-      </div>
-      </div>
-    </header>
-    <div class="max-w-7xl mx-auto lessons-container">
-      <div class="flex flex-wrap items-center">
-        <h2 class="text-4xl underline-offset-4 py-4 underline decoration-[7px]">
-          Lessons
-        </h2>
-      </div>
-      <div id="app" class="app flex flex-wrap justify-center gap-5 mx-auto">
-        <div
-          v-for="Lesson in Lessons"
-          :key="Lesson.id"
-          class="border-2 p-2 hover:shadow"
-        >
-          <div class="product-image">
-            <img
-              :src="`./images/${Lesson.LessonImage}`"
-              class="w-[250px] h-[250px] object-cover"
-              alt="Lesson Image"
-            />
-          </div>
-          <div class="product-info">
-            <div class="rating flex justify-center">
-              <span v-for="n in Lesson.Rating" class="star"
-                ><i class="fa-solid fa-star"></i
-              ></span>
-            </div>
-            <h3 class="text-center text-2xl font-semibold">
-              {{ Lesson.LessonName }}
-            </h3>
-
-            <p><strong>Price: </strong> AED {{ Lesson.Price }}</p>
-
-            <p class="text-red-600" v-if="Lesson.Space <= 5">
-              <strong>Space: </strong> {{ Lesson.Space }}
-            </p>
-            <p v-else><strong>Space: </strong> {{ Lesson.Space }}</p>
-          </div>
+    <header class="fixed left-0 right-0 bg-white z-10 shadow">
+      <div
+        class="flex justify-between items-center p-4 max-w-7xl mx-auto sm:flex-row flex-col gap-3"
+      >
+        <div class="logo flex items-center gap-2 text-2xl font-semibold">
+          <i class="fa-solid fa-baseball-bat-ball"></i>
+          After School Activity
+        </div>
+        <div class="SearchBar">
+          <input
+            type="search"
+            placeholder="Search for lessons"
+            v-model="searchQuery"
+            class="border p-2 bg-gray-50 rounded h-10"
+          />
           <button
-            v-if="Lesson.Space === 0"
-            disabled
-            class="flex opacity-50 justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
+            class="bg-black text-white p-2 rounded hover:bg-gray-800 cursor-pointer"
+            @click="searchLesson"
+            v-model="searchQuery"
           >
-            <i class="fa-solid fa-cart-plus mr-2"></i>
-            Add to Cart
-          </button>
-          <button
-            v-else
-            @click="addToCart(Lesson)"
-            class="flex justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
-          >
-            <i class="fa-solid fa-cart-plus mr-2"></i>
-            Add to Cart
+            <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
+        <div class="cart-area">
+          <a href="#" class="hover:underline">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Checkout
+          </a>
+        </div>
+      </div>
+    </header>
+    <div
+      class="max-w-7xl mx-auto lessons-container py-4 pt-44 sm:pt-36 flex justify-between items-center"
+    >
+      <h2 class="text-4xl underline-offset-4 underline decoration-[7px]">
+        Lessons
+      </h2>
+      <div class="sort-container flex items-center gap-3">
+        <label for="Sort" class="text-lg font-medium">Sort By: </label>
+        <select
+          name="Sort"
+          id="Sort"
+          class="border p-2 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
+        >
+          <option value="">Select Option</option>
+          <option value="Subject">Subject</option>
+          <option value="Location">Location</option>
+          <option value="Availability">Availability</option>
+          <option value="Name">Name</option>
+        </select>
+      </div>
+      <div class="sort-container flex items-center gap-3">
+        <label for="Sort" class="text-lg font-medium">Price: </label>
+        <select
+          name="PriceOrder"
+          id="PriceOrder"
+          v-model="sortBy"
+          class="border p-2 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
+          @change="PriceOrder"
+        >
+          <option value="">Select Option</option>
+          <option value="priceAsc">Ascending (Low to High)</option>
+          <option value="priceAsc">Descending (High to Low)</option>
+        </select>
       </div>
     </div>
 
+    <div id="app" class="app flex flex-wrap justify-center gap-5 mx-auto">
+      <div
+        v-for="Lesson in Lessons"
+        :key="Lesson.id"
+        class="border-2 p-2 hover:shadow"
+      >
+        <div class="product-image">
+          <img
+            :src="`./images/${Lesson.LessonImage}`"
+            class="w-[250px] h-[250px] object-cover"
+            alt="Lesson Image"
+          />
+        </div>
+        <div class="product-info">
+          <h3 class="text-center text-2xl font-semibold">
+            {{ Lesson.LessonName }}
+          </h3>
+          <div class="rating flex justify-center">
+            <span v-for="n in Lesson.Rating" class="star"
+              ><i class="fa-solid fa-star"></i
+            ></span>
+          </div>
+          <p><strong>Price: </strong> AED {{ Lesson.Price }}</p>
+
+          <p class="text-red-600" v-if="Lesson.Space <= 5">
+            <strong>Space: </strong> {{ Lesson.Space }}
+          </p>
+          <p v-else><strong>Space: </strong> {{ Lesson.Space }}</p>
+          <p><strong>Location: </strong> {{ Lesson.Location }}</p>
+        </div>
+        <button
+          v-if="Lesson.Space === 0"
+          disabled
+          class="flex opacity-50 justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
+        >
+          <i class="fa-solid fa-cart-plus mr-2"></i>
+          Add to Cart
+        </button>
+        <button
+          v-else
+          @click="addToCart(Lesson)"
+          class="flex justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
+        >
+          <i class="fa-solid fa-cart-plus mr-2"></i>
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+    <footer class="bg-black text-white p-4 text-center mt-2 mb-0" id="footer">
+      <p>&copy; {{ new Date().getFullYear() }} After School Activity</p>
+    </footer>
+
+    <script>
+      new Vue({
+        el: "#footer",
+      });
+    </script>
     <script>
       var App = new Vue({
         el: "#app",
-        computed: {},
+        computed: {
+          filteredLessons() {
+            return this.Lessons.filter((lesson) =>
+              lesson.LessonName.toLowerCase().includes(
+                this.searchQuery.toLowerCase()
+              )
+            );
+          },
+        },
         methods: {
           addToCart: function (lesson) {
             this.Cart.push(lesson.id);
@@ -111,6 +162,8 @@
         data: {
           SiteName: "After School Activity",
           Logo: "After School Activity",
+          SearchQuery: "",
+          CartVisibility: false,
           Cart: [],
           Logo: {
             LogoUrl: "images/CWLogo.png",
@@ -124,6 +177,7 @@
               Rating: 4,
               Price: 20,
               Space: 10,
+              Location: "Dubai",
             },
             {
               id: 2,
@@ -132,6 +186,7 @@
               Rating: 5,
               Price: 30,
               Space: 5,
+              Location: "Abu Dhabi",
             },
             {
               id: 3,
@@ -140,6 +195,7 @@
               Rating: 3,
               Price: 25,
               Space: 8,
+              Location: "Sharjah",
             },
             {
               id: 4,
@@ -148,6 +204,7 @@
               Rating: 4,
               Price: 15,
               Space: 12,
+              Location: "Ajman",
             },
             {
               id: 5,
@@ -156,6 +213,7 @@
               Rating: 5,
               Price: 40,
               Space: 7,
+              Location: "Fujairah",
             },
             {
               id: 6,
@@ -164,6 +222,7 @@
               Rating: 4,
               Price: 10,
               Space: 20,
+              Location: "Ras Al Khaimah",
             },
             {
               id: 7,
@@ -172,6 +231,7 @@
               Rating: 3,
               Price: 18,
               Space: 9,
+              Location: "Umm Al Quwain",
             },
             {
               id: 8,
@@ -180,6 +240,7 @@
               Rating: 4,
               Price: 22,
               Space: 6,
+              Location: "Dubai",
             },
             {
               id: 9,
@@ -188,6 +249,7 @@
               Rating: 5,
               Price: 35,
               Space: 5,
+              Location: "Abu Dhabi",
             },
             {
               id: 10,
@@ -196,6 +258,7 @@
               Rating: 4,
               Price: 28,
               Space: 11,
+              Location: "Sharjah",
             },
           ],
         },
