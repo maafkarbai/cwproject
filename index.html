@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="" />
+    <link rel="icon" type="image/svg+xml" href="images/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>After School Activity</title>
     <link rel="stylesheet" href="style.css" />
@@ -13,147 +13,173 @@
     ></script>
   </head>
   <body>
-    <header class="fixed left-0 right-0 bg-white z-10 shadow">
-      <div
-        class="flex justify-between items-center p-4 max-w-7xl mx-auto sm:flex-row flex-col gap-3"
-      >
-        <div class="logo flex items-center gap-2 text-2xl font-semibold">
-          <i class="fa-solid fa-baseball-bat-ball"></i>
-          After School Activity
+    <div id="app">
+      <header class="fixed left-0 right-0 bg-white z-10 shadow">
+        <div
+          class="flex justify-between items-center p-4 max-w-7xl mx-auto sm:flex-row flex-col gap-3"
+        >
+          <div class="logo flex items-center gap-2 text-2xl font-semibold">
+            <i class="fa-solid fa-baseball-bat-ball"></i>
+            After School Activity
+          </div>
+          <div class="HeaderAreaTwo">
+            <input
+              type="search"
+              placeholder="Search for lessons"
+              v-model="SearchQuery"
+              class="border p-2 bg-gray-50 rounded h-10"
+            />
+            <button
+              class="bg-black text-white p-2 rounded hover:bg-gray-800 cursor-pointer"
+              @click="searchLesson"
+              v-model="SearchQuery"
+            >
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
         </div>
-        <div class="SearchBar">
-          <input
-            type="search"
-            placeholder="Search for lessons"
-            v-model="searchQuery"
-            class="border p-2 bg-gray-50 rounded h-10"
-          />
-          <button
-            class="bg-black text-white p-2 rounded hover:bg-gray-800 cursor-pointer"
-            @click="searchLesson"
-            v-model="searchQuery"
+      </header>
+      <div
+        class="cart-area flex items-center gap-2 fixed top-4 right-4"
+        v-if="Cart.length > 0"
+      >
+        <a
+          href="#"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-black text-white hover:bg-gray-800 transition-colors"
+        >
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>Checkout ({{ Cart.length }})</span>
+        </a>
+      </div>
+      <div
+        class="max-w-7xl mx-auto lessons-container py-4 pt-44 sm:pt-36 flex justify-between items-center"
+      >
+        <h2 class="text-4xl underline-offset-4 underline decoration-[7px]">
+          Lessons
+        </h2>
+        <div class="sort-container flex items-center gap-3">
+          <label for="Sort" class="text-lg font-medium">Sort By: </label>
+          <select
+            name="Sort"
+            id="Sort"
+            class="border p-2 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
           >
-            <i class="fa-solid fa-magnifying-glass"></i>
+            <option value="">Select Option</option>
+            <option value="Subject">Subject</option>
+            <option value="Location">Location</option>
+            <option value="Availability">Availability</option>
+            <option value="Name">Name</option>
+          </select>
+        </div>
+        <div class="sort-container flex items-center gap-3">
+          <label for="Sort" class="text-lg font-medium">Price: </label>
+          <select
+            name="PriceOrder"
+            id="PriceOrder"
+            v-model="sortBy"
+            class="border p-2 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
+            @change="PriceOrder"
+          >
+            <option value="">Select Option</option>
+            <option value="priceAsc">Ascending (Low to High)</option>
+            <option value="priceAsc">Descending (High to Low)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-5 mx-auto">
+        <div
+          v-for="Lesson in FilteredProducts"
+          :key="Lesson.id"
+          class="border-2 p-2 hover:shadow"
+        >
+          <div class="product-image">
+            <img
+              :src="`./images/${Lesson.LessonImage}`"
+              class="w-[250px] h-[250px] object-cover"
+              alt="Lesson Image"
+            />
+          </div>
+          <div class="product-info">
+            <h3 class="text-center text-2xl font-semibold">
+              {{ Lesson.LessonName }}
+            </h3>
+            <div class="rating flex justify-center">
+              <span v-for="n in Lesson.Rating" class="star"
+                ><i class="fa-solid fa-star"></i
+              ></span>
+            </div>
+            <p><strong>Price: </strong> AED {{ Lesson.Price }}</p>
+
+            <p class="text-red-600" v-if="Lesson.Space <= 5">
+              <strong>Space: </strong> {{ Lesson.Space }}
+            </p>
+            <p v-else><strong>Space: </strong> {{ Lesson.Space }}</p>
+            <p><strong>Location: </strong> {{ Lesson.Location }}</p>
+          </div>
+          <button
+            v-if="Lesson.Space === 0"
+            disabled
+            class="flex opacity-50 justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
+          >
+            <i class="fa-solid fa-cart-plus mr-2"></i>
+            Add to Cart
+          </button>
+          <button
+            v-else
+            @click="addToCart(Lesson)"
+            class="flex justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
+          >
+            <i class="fa-solid fa-cart-plus mr-2"></i>
+            Add to Cart
           </button>
         </div>
-        <div class="cart-area">
-          <a href="#" class="hover:underline">
-            <i class="fa-solid fa-cart-shopping"></i>
-            Checkout
-          </a>
-        </div>
       </div>
-    </header>
-    <div
-      class="max-w-7xl mx-auto lessons-container py-4 pt-44 sm:pt-36 flex justify-between items-center"
-    >
-      <h2 class="text-4xl underline-offset-4 underline decoration-[7px]">
-        Lessons
-      </h2>
-      <div class="sort-container flex items-center gap-3">
-        <label for="Sort" class="text-lg font-medium">Sort By: </label>
-        <select
-          name="Sort"
-          id="Sort"
-          class="border p-2 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-        >
-          <option value="">Select Option</option>
-          <option value="Subject">Subject</option>
-          <option value="Location">Location</option>
-          <option value="Availability">Availability</option>
-          <option value="Name">Name</option>
-        </select>
-      </div>
-      <div class="sort-container flex items-center gap-3">
-        <label for="Sort" class="text-lg font-medium">Price: </label>
-        <select
-          name="PriceOrder"
-          id="PriceOrder"
-          v-model="sortBy"
-          class="border p-2 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-          @change="PriceOrder"
-        >
-          <option value="">Select Option</option>
-          <option value="priceAsc">Ascending (Low to High)</option>
-          <option value="priceAsc">Descending (High to Low)</option>
-        </select>
-      </div>
+      <footer class="bg-black text-white p-4 text-center mt-2 mb-0">
+        <p>&copy; {{ new Date().getFullYear() }} After School Activity</p>
+      </footer>
     </div>
 
-    <div id="app" class="app flex flex-wrap justify-center gap-5 mx-auto">
-      <div
-        v-for="Lesson in Lessons"
-        :key="Lesson.id"
-        class="border-2 p-2 hover:shadow"
-      >
-        <div class="product-image">
-          <img
-            :src="`./images/${Lesson.LessonImage}`"
-            class="w-[250px] h-[250px] object-cover"
-            alt="Lesson Image"
-          />
-        </div>
-        <div class="product-info">
-          <h3 class="text-center text-2xl font-semibold">
-            {{ Lesson.LessonName }}
-          </h3>
-          <div class="rating flex justify-center">
-            <span v-for="n in Lesson.Rating" class="star"
-              ><i class="fa-solid fa-star"></i
-            ></span>
-          </div>
-          <p><strong>Price: </strong> AED {{ Lesson.Price }}</p>
-
-          <p class="text-red-600" v-if="Lesson.Space <= 5">
-            <strong>Space: </strong> {{ Lesson.Space }}
-          </p>
-          <p v-else><strong>Space: </strong> {{ Lesson.Space }}</p>
-          <p><strong>Location: </strong> {{ Lesson.Location }}</p>
-        </div>
-        <button
-          v-if="Lesson.Space === 0"
-          disabled
-          class="flex opacity-50 justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
-        >
-          <i class="fa-solid fa-cart-plus mr-2"></i>
-          Add to Cart
-        </button>
-        <button
-          v-else
-          @click="addToCart(Lesson)"
-          class="flex justify-center w-full items-center px-6 py-3 cursor-pointer border-2 border-gray-900 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition"
-        >
-          <i class="fa-solid fa-cart-plus mr-2"></i>
-          Add to Cart
-        </button>
-      </div>
-    </div>
-
-    <footer class="bg-black text-white p-4 text-center mt-2 mb-0" id="footer">
-      <p>&copy; {{ new Date().getFullYear() }} After School Activity</p>
-    </footer>
-
-    <script>
-      new Vue({
-        el: "#footer",
-      });
-    </script>
     <script>
       var App = new Vue({
         el: "#app",
         computed: {
-          filteredLessons() {
-            return this.Lessons.filter((lesson) =>
-              lesson.LessonName.toLowerCase().includes(
-                this.searchQuery.toLowerCase()
-              )
-            );
+          FilteredProducts() {
+            return this.Lessons.filter((Lesson) => {
+              const searchQuery = this.SearchQuery.toLowerCase();
+              return (
+                Lesson.LessonName.toLowerCase().includes(searchQuery) ||
+                Lesson.Location.toLowerCase().includes(searchQuery)
+              );
+            });
           },
         },
         methods: {
-          addToCart: function (lesson) {
-            this.Cart.push(lesson.id);
-            this.showNotification(`${lesson.LessonName} added to cart`);
+          CartItemCount() {
+            return this.Cart.length;
+          },
+          canAddToCart() {
+            return this.Lessons.Space > this.CartItemCount;
+          },
+          addToCart(Lesson) {
+            if (this.canAddToCart(Lesson)) {
+              this.Cart.push(Lesson);
+              Lesson.Space--;
+            }
+          },
+          removeFromCart(index) {
+            const Lesson = this.Cart[index];
+            Lesson.Space++;
+            this.Cart.splice(index, 1);
+          },
+          calculateTotalPrice() {
+            return this.Cart.reduce((sum, item) => sum + item.Price, 0);
+          },
+          toggleCheckout() {
+            this.CartVisibility = !this.CartVisibility;
+          },
+          searchLesson() {
+            // Search is handled by FilteredProducts computed property
           },
         },
         mounted() {
@@ -161,7 +187,6 @@
         },
         data: {
           SiteName: "After School Activity",
-          Logo: "After School Activity",
           SearchQuery: "",
           CartVisibility: false,
           Cart: [],
